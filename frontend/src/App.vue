@@ -2,24 +2,19 @@
 import { computed, Ref } from 'vue'
 import { onMounted, ref } from 'vue'
 
-import type { Log } from '~/types'
 import LogEntry from '~/components/LogEntry.vue'
+import type { Log } from '~/types'
+import { listenLogs } from '~/lib/sse'
 
 const items: Ref<Log[]> = ref([])
 const currentItem: Ref<Log|null> = ref(null)
 const selectedItems = computed(() => items.value.filter(item => item.selected))
 
 onMounted(() => {
-  startSse()
-})
-
-function startSse() {
-  let es = new EventSource('/logs')
-
-  es.addEventListener('log', event => {
-    items.value = [JSON.parse(event.data), ...items.value]
+  listenLogs((log: Log) => {
+    items.value = [log, ...items.value]
   })
-}
+})
 
 function clearLogs() {
   items.value = []
