@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import type { Log } from '~/types'
-import { extractStatus } from '~/utils'
+import { getMethodCssClass } from '~/utils'
 
 const emit = defineEmits<{
   (e: 'select', value: Log): void
 }>()
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   log: Log
   full: boolean
   selectable: boolean
-}>()
+}>(), {
+  selectable: false,
+  full: false,
+})
 
 const time = !props.full ?
   `${props.log.elapsed}ms` :
   `${props.log.elapsed}ms / ${props.log.done_at}`
 
-const status = extractStatus(props.log.status)
+const status = props.log.status_code
 </script>
 
 <template>
@@ -39,7 +42,7 @@ const status = extractStatus(props.log.status)
     <div class="flex flex-col w-full">
       <div class="grid grid-cols-[auto_1fr] gap-2">
         <div
-          :class="`method-${log.method.toLowerCase()}`"
+          :class="getMethodCssClass(log.method)"
           v-text="log.method"
         />
         <div

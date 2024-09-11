@@ -8,6 +8,7 @@ export interface Log {
     }
     full_url: string
     status: string
+    status_code: number
     elapsed: number
     req: string
     res: string

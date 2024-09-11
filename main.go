@@ -11,15 +11,16 @@ import (
 )
 
 type Log struct {
-	Method    string        `json:"method,omitempty"`
-	URL       url.URL       `json:"url"`
-	FullURL   string        `json:"full_url,omitempty"`
-	Status    string        `json:"status,omitempty"`
-	Req       string        `json:"req,omitempty"`
-	Res       string        `json:"res,omitempty"`
-	Elapsed   time.Duration `json:"elapsed,omitempty"`
-	StartedAt time.Time     `json:"started_at"`
-	DoneAt    time.Time     `json:"done_at"`
+	Method     string        `json:"method,omitempty"`
+	URL        url.URL       `json:"url"`
+	FullURL    string        `json:"full_url,omitempty"`
+	Status     string        `json:"status,omitempty"`
+	StatusCode int           `json:"status_code,omitempty"`
+	Req        string        `json:"req,omitempty"`
+	Res        string        `json:"res,omitempty"`
+	Elapsed    time.Duration `json:"elapsed,omitempty"`
+	StartedAt  time.Time     `json:"started_at"`
+	DoneAt     time.Time     `json:"done_at"`
 }
 
 func main() {

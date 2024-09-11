@@ -1,3 +1,3 @@
-export function extractStatus(statusString: string): number {
-    return parseInt(statusString.split(' ')[0])
+export function getMethodCssClass(method: string): string {
+    return `method-${method.toLowerCase()}`
 }

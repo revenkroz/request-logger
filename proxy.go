@@ -60,15 +60,16 @@ func NewProxyHandler(
 		}
 
 		logChan <- Log{
-			Method:    r.Method,
-			URL:       *r.URL,
-			FullURL:   r.URL.String(),
-			Status:    res.Result().Status,
-			Req:       string(dumpReq),
-			Res:       string(dumpRes),
-			Elapsed:   elapsed,
-			StartedAt: start,
-			DoneAt:    time.Now(),
+			Method:     r.Method,
+			URL:        *r.URL,
+			FullURL:    r.URL.String(),
+			Status:     res.Result().Status,
+			StatusCode: res.Result().StatusCode,
+			Req:        string(dumpReq),
+			Res:        string(dumpRes),
+			Elapsed:    elapsed,
+			StartedAt:  start,
+			DoneAt:     time.Now(),
 		}
 	})
 }

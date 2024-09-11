@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, Ref } from 'vue'
-import { onMounted, ref } from 'vue'
+import type { Ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import LogEntry from '~/components/LogEntry.vue'
 import type { Log } from '~/types'
@@ -35,9 +35,9 @@ function copyToClipboard(text: string) {
     <div class="w-full h-full overflow-y-auto">
       <div class="grid grid-cols-[120px_1fr] md:grid-cols-[300px_1fr] gap-4 h-full">
         <div
-          class="h-full overflow-y-auto w-full p-4"
+          class="h-full w-full overflow-y-auto p-4"
         >
-          <div class="h-80px mb-4"></div>
+          <div class="top-bar"></div>
           <div class="mb-2">
             <button
               class="btn-1"
@@ -49,7 +49,6 @@ function copyToClipboard(text: string) {
             v-for="log in items"
             :key="log.req"
             :log="log"
-            :full="false"
             :selectable="true"
             class="cursor-pointer my-1 w-full"
             :class="{
@@ -71,13 +70,12 @@ function copyToClipboard(text: string) {
         </div>
 
         <div class="p-4">
-          <div class="w-full h-80px bg-gray-100 rounded-md p-4 mb-4">
+          <div class="w-full top-bar bg-gray-100 rounded-md p-4">
             <LogEntry
               v-if="currentItem"
               :key="currentItem.req"
               :log="currentItem"
               :full="true"
-              :selectable="false"
               class="w-full"
             />
           </div>
@@ -95,10 +93,7 @@ function copyToClipboard(text: string) {
                 />
               </div>
               <div class="mt-2">
-                <span
-                  class="text-secondary"
-                  v-text="'Request'"
-                />
+                <span class="text-secondary" v-text="'Request'" />
               </div>
               <pre
                 class="code-block"
@@ -118,10 +113,7 @@ function copyToClipboard(text: string) {
                 />
               </div>
               <div class="mt-2">
-                <span
-                  class="text-secondary"
-                  v-text="'Response'"
-                />
+                <span class="text-secondary" v-text="'Response'" />
               </div>
               <pre
                 class="code-block"
