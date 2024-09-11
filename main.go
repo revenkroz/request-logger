@@ -42,7 +42,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	logChan := make(chan Log, *maxLogs)
+	logChan := make(chan Log, 10)
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -51,7 +51,7 @@ func main() {
 		defer wg.Done()
 
 		fmt.Println("Frontend server listening on", *frontendAddr)
-		err := http.ListenAndServe(*frontendAddr, NewFrontendServer(logChan))
+		err := http.ListenAndServe(*frontendAddr, NewFrontendServer(logChan, *maxLogs))
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

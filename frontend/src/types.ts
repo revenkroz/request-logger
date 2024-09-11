@@ -1,10 +1,10 @@
 export interface Log {
     method: string
     url: {
-        scheme: string
-        host: string
-        path: string
-        raw_query: string
+        Scheme: string
+        Host: string
+        Path: string
+        RawQuery: string
     }
     full_url: string
     status: string

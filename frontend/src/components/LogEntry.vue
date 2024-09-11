@@ -24,7 +24,7 @@ const status = props.log.status_code
 
 <template>
   <div
-    class="flex flex-row items-center p-2 bg-gray-100 color-black rounded-md"
+    class="flex items-center p-2 bg-gray-100 color-black rounded-md"
   >
     <div
       v-if="selectable"
@@ -50,7 +50,7 @@ const status = props.log.status_code
           v-text="full ? log.full_url : log.url.path"
         />
       </div>
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <span
           class="text-secondary"
           v-text="time"

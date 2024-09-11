@@ -12,10 +12,28 @@ import (
 //go:embed all:frontend/dist/*
 var frontend embed.FS
 
+type LogStore struct {
+	limit int
+	Logs  []Log
+}
+
+func (l *LogStore) Add(log Log) {
+	if len(l.Logs) >= l.limit {
+		l.Logs = l.Logs[1:]
+	}
+
+	l.Logs = append(l.Logs, log)
+}
+
 func NewFrontendServer(
 	logChan chan Log,
+	logLimit int,
 ) http.Handler {
 	mux := http.NewServeMux()
+
+	logStore := LogStore{
+		limit: logLimit,
+	}
 
 	indexHTML, err := frontend.ReadFile("frontend/dist/index.html")
 	if err != nil {
@@ -46,6 +64,7 @@ func NewFrontendServer(
 		for {
 			select {
 			case c := <-logChan:
+				logStore.Add(c)
 				jsn, _ := json.Marshal(c)
 				fmt.Fprintf(w, "event: log\ndata: %s\n\n", jsn)
 				w.(http.Flusher).Flush()
@@ -53,6 +72,12 @@ func NewFrontendServer(
 				return
 			}
 		}
+	})
+
+	mux.HandleFunc("/logs/all", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		jsn, _ := json.Marshal(logStore.Logs)
+		w.Write(jsn)
 	})
 
 	return mux
