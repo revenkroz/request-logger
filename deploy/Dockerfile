@@ -1,4 +1,4 @@
-FROM node:20-alpine as frontend
+FROM node:20-alpine AS frontend
 
 WORKDIR /app/frontend
 
@@ -14,7 +14,7 @@ COPY frontend .
 RUN yarn build
 
 
-FROM golang:1.22-alpine as backend
+FROM golang:1.22-alpine AS backend
 
 RUN apk --no-cache add bash git openssh
 
@@ -34,10 +34,10 @@ ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 RUN go build -o requestlogger -ldflags "-w -s" .
 
 
-FROM alpine:3.16 as prod
+FROM alpine:3.16 AS prod
 
 WORKDIR /app
 
-COPY --from=backend /app/app /app/
+COPY --from=backend /app/requestlogger /app/
 
 CMD [ "/app/requestlogger" ]

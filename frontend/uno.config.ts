@@ -3,7 +3,8 @@ import { defineConfig, presetTypography, presetUno, transformerDirectives, trans
 export default defineConfig({
   shortcuts: [
     ['btn-1', 'border-none outline-none p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer'],
-    ['btn-2', 'border-none outline-none p-2 bg-slate-500 text-white rounded-md hover:bg-slate-600 cursor-pointer'],
+
+    ['text-secondary', 'text-sm color-gray-500'],
 
     ['code-block', 'p-4 rounded-md bg-gray-100 color-gray-900'],
   ],

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Log } from '~/types'
+import { extractStatus } from '~/utils'
 
 const emit = defineEmits<{
   (e: 'select', value: Log): void
@@ -15,7 +16,7 @@ const time = !props.full ?
   `${props.log.elapsed}ms` :
   `${props.log.elapsed}ms / ${props.log.done_at}`
 
-const status = parseInt(props.log.status.split(' ')[0])
+const status = extractStatus(props.log.status)
 </script>
 
 <template>
@@ -48,7 +49,7 @@ const status = parseInt(props.log.status.split(' ')[0])
       </div>
       <div class="flex justify-between items-center">
         <span
-          class="text-sm color-gray-500"
+          class="text-secondary"
           v-text="time"
         />
         <span

@@ -60,11 +60,11 @@ function copyToClipboard(text: string) {
           />
           <div class="mt-2 flex flex-col">
             <span
-              class="text-sm color-gray-500"
+              class="text-secondary"
               v-text="'Total: ' + items.length"
             />
             <span
-              class="text-sm color-gray-500"
+              class="text-secondary"
               v-text="'Selected: ' + selectedItems.length"
             />
           </div>
@@ -96,7 +96,7 @@ function copyToClipboard(text: string) {
               </div>
               <div class="mt-2">
                 <span
-                  class="text-sm color-gray-500"
+                  class="text-secondary"
                   v-text="'Request'"
                 />
               </div>
@@ -119,7 +119,7 @@ function copyToClipboard(text: string) {
               </div>
               <div class="mt-2">
                 <span
-                  class="text-sm color-gray-500"
+                  class="text-secondary"
                   v-text="'Response'"
                 />
               </div>
