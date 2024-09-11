@@ -1,0 +1,6 @@
+.idea
+.vscode
+
+frontend/dist/*
+!frontend/dist/.gitkeep
+node_modules
