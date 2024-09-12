@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a reverse proxy server that can log all incoming requests to the target server and print them to the console or wev view.
+This is a reverse proxy server that can log all incoming requests to the target server and print them to the console or in browser.
 
 ## Usage
 
