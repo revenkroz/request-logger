@@ -39,15 +39,22 @@ const status = props.log.status_code
         @click="() => emit('select', log)"
       />
     </div>
-    <div class="flex flex-col w-full">
-      <div class="grid grid-cols-[auto_1fr] gap-2">
+    <div class="flex flex-col w-full gap-2 md:gap-0">
+      <div
+        class="grid"
+        :class="{
+          'grid-rows gap-0 md:grid-cols-[auto_1fr] md:gap-2': !full,
+          'grid-cols-[auto_1fr] gap-2': full,
+        }"
+      >
         <div
           :class="getMethodCssClass(log.method)"
           v-text="log.method"
         />
         <div
-          class="whitespace-nowrap"
-          v-text="full ? log.full_url : log.url.path"
+          class="truncate"
+          :title="log.full_url"
+          v-text="full ? log.full_url : log.url.Path"
         />
       </div>
       <div class="flex items-center justify-between">

@@ -6,7 +6,7 @@ export default defineConfig({
 
     ['text-secondary', 'text-sm color-gray-500'],
 
-    ['code-block', 'p-4 rounded-md bg-gray-100 color-gray-900'],
+    ['code-block', 'p-4 rounded-md bg-gray-100 color-gray-900 overflow-x-auto'],
 
     ['top-bar', 'h-80px mb-4'],
   ],

@@ -33,9 +33,9 @@ function copyToClipboard(text: string) {
 <template>
   <div class="w-full overflow-hidden h-screen">
     <div class="w-full h-full overflow-y-auto">
-      <div class="grid grid-cols-[120px_1fr] md:grid-cols-[300px_1fr] gap-4 h-full">
+      <div class="grid grid-cols-[120px_1fr] md:grid-cols-[300px_1fr] gap-2 md:gap-4 h-full">
         <div
-          class="h-full w-full overflow-y-auto p-4"
+          class="h-full w-full overflow-y-auto p-2 md:p-4"
         >
           <div class="top-bar"></div>
           <div class="mb-2">
@@ -69,7 +69,7 @@ function copyToClipboard(text: string) {
           </div>
         </div>
 
-        <div class="p-4">
+        <div class="p-2 md:p-4">
           <div class="w-full top-bar bg-gray-100 rounded-md p-4">
             <LogEntry
               v-if="currentItem"
