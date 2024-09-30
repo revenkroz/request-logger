@@ -10,13 +10,9 @@ __Note:__ For all examples below we assume that the target server is https://jso
 
 ### Executable usage
 
-Add environment variables:
+With environment variables:
 ```bash
-TARGET_URL=https://jsonplaceholder.typicode.com
-```
-
-And run.
-```bash
+TARGET_URL=https://jsonplaceholder.typicode.com \
 ./requestlogger
 ```
 
@@ -25,14 +21,6 @@ Or use flags:
 ./requestlogger \
     -target=https://jsonplaceholder.typicode.com
 ```
-
-#### List of all flags
-
-* `-target` - Target URL (if empty, `env:TARGET_URL` will be used).
-* `-addr` - Proxy listen address (if empty, `env:LISTEN_ADDR` will be used, default `0.0.0.0:21000`).
-* `-faddr` - Frontend listen address (if empty, `env:FRONTEND_ADDR` will be used, default `0.0.0.0:21001`).
-* `-maxlogs` - Maximum number of logs to keep in memory (if empty, `env:MAX_LOGS` will be used, default `20`).
-* `-stdout` - Print logs to stdout (if empty, `env:USE_STDOUT` will be used, default `false`).
 
 ### Docker compose usage
 
@@ -50,9 +38,33 @@ services:
 
 ## Run
 
-After start, you can open http://localhost:21001 in your browser to see the logs.
+After start, you can open http://localhost:21000 in your browser to see the logs.
 
-Send requests to http://localhost:21000 to see them in the logs.
+Send requests to http://localhost:21001 to see them in the logs.
 ```shell
-curl https://localhost:21000/todos/1
+curl https://localhost:21001/todos/1
 ```
+
+## Multiple listen addresses
+
+```bash
+./requestlogger \
+    -target=https://jsonplaceholder.typicode.com \
+    -addr=0.0.0.0:21001 \
+    -addr=0.0.0.0:21002
+```
+
+or with environment variables:
+```bash
+PROXY_ADDR=0.0.0.0:21001,0.0.0.0:21002 \
+TARGET_URL=https://jsonplaceholder.typicode.com \
+./requestlogger
+```
+
+## List of all flags
+
+* `-target` - Target URL (if empty, `env:TARGET_URL` will be used).
+* `-faddr` - Frontend listen address (if empty, `env:FRONTEND_ADDR` will be used, default `0.0.0.0:21000`).
+* `-addr` - Multiple values, proxy listen addresses (if empty, `env:PROXY_ADDR` will be used, default `0.0.0.0:21001`).
+* `-maxlogs` - Maximum number of logs to keep in memory (if empty, `env:MAX_LOGS` will be used, default `20`).
+* `-stdout` - Print logs to stdout (if empty, `env:USE_STDOUT` will be used, default `false`).
