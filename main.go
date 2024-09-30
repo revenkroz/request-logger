@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"slices"
+	"strings"
 	"sync"
 	"time"
 )
@@ -23,45 +25,36 @@ type Log struct {
 	DoneAt     time.Time     `json:"done_at"`
 }
 
+const defaultProxyListenAddr = "0.0.0.0:21001"
+
 var (
 	// Server configuration
+	fromToAddresses arrayFlags = getFromEnvStringSlice("PROXY_ADDR", []string{})
 	frontendAddress            = getFromEnvString("FRONTEND_ADDR", "0.0.0.0:21000")
-	proxyAddresses  arrayFlags = getFromEnvStringSlice("PROXY_ADDR", []string{
-		"0.0.0.0:21001",
-	})
-
-	// Proxy configuration
-	targetUrlRaw = getFromEnvString("TARGET_URL", "")
 
 	// Other
 	maxLogs       = getFromEnvInt("MAX_LOGS", 30)
 	printToStdout = getFromEnvBool("USE_STDOUT", false)
-
-	// Internal variables
-	targetUrl *url.URL
 )
 
 func init() {
-	flag.Var(&proxyAddresses, "addr", "Frontend listen address (if empty, env:FRONTEND_ADDR will be used).")
-	flag.StringVar(&frontendAddress, "faddr", frontendAddress, "Proxy listen address (if empty, env:LISTEN_ADDR will be used).")
-	flag.StringVar(&targetUrlRaw, "target", targetUrlRaw, "Target URL (if empty, env:TARGET_URL will be used).")
+	flag.Var(&fromToAddresses, "proxy", "Multiple values, proxy listen address and target address (if empty, env:PROXY_ADDR will be used).")
+	flag.StringVar(&frontendAddress, "front", frontendAddress, "Frontend listen address (if empty, env:FRONTEND_ADDR will be used).")
 	flag.IntVar(&maxLogs, "maxlogs", maxLogs, "Maximum number of logs to keep in memory (if empty, env:MAX_LOGS will be used).")
 	flag.BoolVar(&printToStdout, "stdout", printToStdout, "Print logs to stdout (if empty, env:USE_STDOUT will be used).")
 	flag.Parse()
-
-	targetUrl = parseUrl(targetUrlRaw)
 }
 
 func main() {
 	logChan := make(chan Log, 10)
 
 	wg := sync.WaitGroup{}
-	wg.Add(1 + len(proxyAddresses))
+	wg.Add(1 + len(fromToAddresses))
 
 	go func() {
 		defer wg.Done()
 
-		fmt.Println("Frontend server listening on", frontendAddress)
+		fmt.Printf("Frontend server listening on http://%s\n", frontendAddress)
 		err := http.ListenAndServe(frontendAddress, NewFrontendServer(logChan, maxLogs))
 		if err != nil {
 			fmt.Println(err)
@@ -69,12 +62,15 @@ func main() {
 		}
 	}()
 
-	for _, proxyAddr := range proxyAddresses {
+	addresses := prepareFromToAddresses(fromToAddresses)
+	for _, fromToAddr := range addresses {
+		from, to := fromToAddr[0], fromToAddr[1]
+
 		go func() {
 			defer wg.Done()
 
-			fmt.Println("Proxy server listening on", proxyAddr)
-			err := http.ListenAndServe(proxyAddr, NewProxyHandler(targetUrl, logChan, printToStdout))
+			fmt.Printf("Proxy server listening on http://%s, forwarding to %s\n", from, to)
+			err := http.ListenAndServe(from, NewProxyHandler(parseUrl(to), logChan, printToStdout))
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
@@ -83,4 +79,36 @@ func main() {
 	}
 
 	wg.Wait()
+}
+
+func prepareFromToAddresses(fromToAddresses []string) [][]string {
+	fromTos := make([][]string, 0)
+	usedAddrs := make([]string, 0)
+
+	for _, fromToAddr := range fromToAddresses {
+		split := strings.Split(fromToAddr, "::")
+		if len(split) > 2 || len(split) == 0 {
+			fmt.Println("Invalid proxy address:", fromToAddr)
+			os.Exit(1)
+		}
+
+		if len(split) == 1 {
+			split = []string{defaultProxyListenAddr, split[0]}
+		}
+
+		if slices.Contains(usedAddrs, split[0]) {
+			fmt.Println("Duplicate proxy listen address:", split[0])
+			os.Exit(1)
+		}
+
+		if split[1] == "" {
+			fmt.Println("Target address is empty")
+			os.Exit(1)
+		}
+
+		fromTos = append(fromTos, split)
+		usedAddrs = append(usedAddrs, split[0])
+	}
+
+	return fromTos
 }

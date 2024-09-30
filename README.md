@@ -10,16 +10,19 @@ __Note:__ For all examples below we assume that the target server is https://jso
 
 ### Executable usage
 
+Proxy format is `<from>::<to>`, where `from` is the address to listen to and `to` is the target address.
+By default, the proxy listens on `0.0.0.0:21001`.
+
 With environment variables:
 ```bash
-TARGET_URL=https://jsonplaceholder.typicode.com \
+PROXY_ADDR=https://jsonplaceholder.typicode.com \
 ./requestlogger
 ```
 
 Or use flags:
 ```bash
 ./requestlogger \
-    -target=https://jsonplaceholder.typicode.com
+    --proxy=https://jsonplaceholder.typicode.com
 ```
 
 ### Docker compose usage
@@ -30,10 +33,10 @@ services:
     image: ghcr.io/revenkroz/request-logger:main
     container_name: proxy
     environment:
-      TARGET_URL: https://jsonplaceholder.typicode.com
+      PROXY_ADDR: https://jsonplaceholder.typicode.com
     ports:
-        - "21000:21000"
-        - "21001:21001"
+        - "21000:21000" # frontend
+        - "21001:21001" # proxy
 ```
 
 ## Run
@@ -49,22 +52,19 @@ curl https://localhost:21001/todos/1
 
 ```bash
 ./requestlogger \
-    -target=https://jsonplaceholder.typicode.com \
-    -addr=0.0.0.0:21001 \
-    -addr=0.0.0.0:21002
+    --proxy=0.0.0.0:21001::https://jsonplaceholder.typicode.com \
+    --proxy=0.0.0.0:21002::https://example.com
 ```
 
 or with environment variables:
 ```bash
-PROXY_ADDR=0.0.0.0:21001,0.0.0.0:21002 \
-TARGET_URL=https://jsonplaceholder.typicode.com \
+PROXY_ADDR=0.0.0.0:21001::https://jsonplaceholder.typicode.com,0.0.0.0:21002::https://example.com \
 ./requestlogger
 ```
 
 ## List of all flags
 
-* `-target` - Target URL (if empty, `env:TARGET_URL` will be used).
+* `--proxy` - Multiple values, proxy listen address and target address (if empty, `env:PROXY_ADDR` will be used).
 * `-faddr` - Frontend listen address (if empty, `env:FRONTEND_ADDR` will be used, default `0.0.0.0:21000`).
-* `-addr` - Multiple values, proxy listen addresses (if empty, `env:PROXY_ADDR` will be used, default `0.0.0.0:21001`).
 * `-maxlogs` - Maximum number of logs to keep in memory (if empty, `env:MAX_LOGS` will be used, default `20`).
 * `-stdout` - Print logs to stdout (if empty, `env:USE_STDOUT` will be used, default `false`).
