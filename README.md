@@ -1,8 +1,8 @@
-# Request Logger Reverse Proxy
+# Request Logger Forward Proxy
 
 ## Description
 
-This is a reverse proxy server that can log all incoming requests to the target server and print them to the console or in browser.
+This is a forward proxy server that can log all requests and responses to the target server and print them to the console or in browser.
 
 ## Usage
 
